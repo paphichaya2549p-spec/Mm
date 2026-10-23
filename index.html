@@ -1,0 +1,659 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ชีทสรุปคะแนน การตัดเกรด และการพัฒนาผู้เรียน</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Mali:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --pink:#ff8fb1;
+  --pink-bg:#fff0f5;
+  --purple:#a69af5;
+  --purple-bg:#f2efff;
+  --mint:#7bd4b7;
+  --mint-bg:#eafaf3;
+  --blue:#82c8ed;
+  --blue-bg:#edf8ff;
+  --yellow:#f5d574;
+  --yellow-bg:#fff9e4;
+  --peach:#ffb697;
+  --ink:#49445c;
+  --muted:#77738a;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  padding:22px;
+  color:var(--ink);
+  background:#f5f1fa;
+  font-family:'Sarabun',sans-serif;
+  line-height:1.5;
+}
+.toolbar{
+  max-width:210mm;
+  margin:0 auto 18px;
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:10px;
+}
+button{
+  border:0;
+  border-radius:25px;
+  padding:11px 20px;
+  background:#9687e8;
+  color:white;
+  font-family:'Mali',sans-serif;
+  font-weight:700;
+  cursor:pointer;
+}
+.sheet{
+  width:210mm;
+  min-height:297mm;
+  margin:0 auto 24px;
+  padding:11mm 12mm;
+  background-color:#fffefd;
+  background-image:
+    linear-gradient(#eeeaf4 1px,transparent 1px),
+    linear-gradient(90deg,#eeeaf4 1px,transparent 1px);
+  background-size:18px 18px;
+  box-shadow:0 5px 24px #40306018;
+  page-break-after:always;
+  overflow:hidden;
+}
+.sheet:last-child{page-break-after:auto}
+.header{
+  position:relative;
+  text-align:center;
+  background:#fff;
+  border:2px solid var(--pink);
+  border-radius:22px;
+  padding:13px;
+  margin-bottom:12px;
+}
+.eyebrow{
+  font:700 10px 'Mali',sans-serif;
+  color:#a48ab6;
+  letter-spacing:1px;
+}
+h1{
+  font:700 24px 'Mali',sans-serif;
+  line-height:1.4;
+  color:#e76f9d;
+  margin:4px 0;
+}
+.subtitle{font-size:12px;color:var(--muted)}
+.decor{position:absolute;top:12px;font-size:23px}
+.left{left:13px}.right{right:13px}
+.card{
+  border:1.5px solid #e9e3f2;
+  border-radius:15px;
+  padding:10px 12px;
+  margin-bottom:9px;
+  background:white;
+  break-inside:avoid;
+}
+.pink{background:var(--pink-bg);border-color:#ffc5d8}
+.purple{background:var(--purple-bg);border-color:#d4ccff}
+.mint{background:var(--mint-bg);border-color:#b5ead8}
+.blue{background:var(--blue-bg);border-color:#c3e8fa}
+.yellow{background:var(--yellow-bg);border-color:#f3e0a0}
+.peach{background:#fff1e9;border-color:#ffd1bb}
+.pink-text{color:#d95f8d}
+.purple-text{color:#8170d3}
+.mint-text{color:#319e80}
+.blue-text{color:#378ab8}
+.yellow-text{color:#a37b1f}
+.peach-text{color:#d57d54}
+.section-title{
+  font:700 15px 'Mali',sans-serif;
+  margin:0 0 7px;
+  display:flex;
+  align-items:center;
+  gap:7px;
+}
+.section-title span{
+  display:inline-flex;
+  width:27px;height:27px;
+  align-items:center;justify-content:center;
+  background:white;
+  border:1px solid currentColor;
+  border-radius:9px;
+  flex-shrink:0;
+}
+h3{font:700 12px 'Mali',sans-serif;margin:2px 0 5px}
+p{font-size:11.5px;margin:4px 0}
+ul,ol{padding-left:19px;margin:5px 0}
+li{font-size:11px;margin:2px 0}
+strong{font-weight:700}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.mini{
+  background:white;
+  border:1.3px solid #e8e2f2;
+  border-radius:12px;
+  padding:9px;
+  text-align:center;
+}
+.emoji{font-size:22px;display:block;margin-bottom:3px}
+.mini p{font-size:10.5px}
+.tag{
+  display:inline-block;
+  font:700 11px 'Mali',sans-serif;
+  margin-bottom:3px;
+}
+.formula{
+  background:white;
+  border:2px dashed #c6b8fa;
+  border-radius:13px;
+  padding:10px;
+  text-align:center;
+  margin:7px 0;
+}
+.formula .equation{
+  font:700 20px 'Mali',sans-serif;
+  color:#7967cf;
+  margin:4px 0;
+}
+.formula p{font-size:11px}
+.highlight{
+  background:white;
+  border-left:4px solid var(--purple);
+  border-radius:0 10px 10px 0;
+  padding:8px 10px;
+  margin:7px 0;
+  font-size:11.5px;
+}
+.pill{
+  display:inline-block;
+  background:white;
+  border:1px solid #e6dff0;
+  border-radius:18px;
+  padding:3px 8px;
+  font-size:10.5px;
+  font-weight:700;
+  margin:2px;
+}
+table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  border-radius:11px;
+  overflow:hidden;
+  background:white;
+  font-size:10.5px;
+  margin:6px 0;
+}
+th,td{
+  border-right:1px solid #e8e3f1;
+  border-bottom:1px solid #e8e3f1;
+  padding:7px;
+  text-align:left;
+  vertical-align:top;
+}
+th{
+  background:#eee9ff;
+  font:700 10.5px 'Mali',sans-serif;
+}
+tr:last-child td{border-bottom:0}
+th:last-child,td:last-child{border-right:0}
+.memory{
+  border:2px dashed #f0b4cb;
+  background:#fff5f9;
+  border-radius:15px;
+  padding:10px;
+  margin-top:8px;
+  text-align:center;
+}
+.memory h3{font-size:14px;color:#d95f8d}
+.memory p{font-size:11.5px}
+.flow{
+  display:flex;align-items:center;justify-content:center;
+  gap:5px;flex-wrap:wrap;margin:8px 0
+}
+.flowbox{
+  background:white;border:1.5px solid #d9d0f6;
+  border-radius:10px;padding:7px;
+  text-align:center;font-size:10.5px;font-weight:700;
+  flex:1;min-width:80px
+}
+.arrow{font-size:16px;color:#9988e6;font-weight:700}
+.footer{
+  text-align:center;
+  margin-top:8px;
+  font:10px 'Mali',sans-serif;
+  color:#9c91b0;
+}
+@media screen and (max-width:800px){
+  body{padding:7px}
+  .sheet{width:100%;min-height:auto;padding:14px}
+  h1{font-size:21px}
+  .grid-3{grid-template-columns:1fr}
+}
+@page{size:A4 portrait;margin:0}
+@media print{
+  body{
+    margin:0;padding:0;background:white;
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+  .toolbar{display:none!important}
+  .sheet{
+    width:210mm;height:297mm;min-height:297mm;
+    margin:0;padding:10mm 11mm;
+    box-shadow:none;overflow:hidden;page-break-after:always;
+  }
+  .sheet:last-child{page-break-after:auto}
+  .card{padding:8px 10px;margin-bottom:7px}
+  p{font-size:10.5px}
+  li{font-size:10.2px;margin:1px 0}
+  .section-title{font-size:13px;margin-bottom:5px}
+  .header{padding:10px;margin-bottom:9px}
+  h1{font-size:22px}
+  .footer{margin-top:5px}
+}
+</style>
+</head>
+
+<body>
+<div class="toolbar">
+  <button onclick="window.print()">🖨️ พิมพ์ / บันทึก PDF</button>
+  <button onclick="document.documentElement.requestFullscreen?.()">✨ อ่านเต็มหน้าจอ</button>
+</div>
+
+<!-- PAGE 1: SCORES -->
+<section class="sheet">
+  <header class="header">
+    <span class="decor left">🌷</span>
+    <span class="decor right">⭐</span>
+    <div class="eyebrow">EDUCATIONAL MEASUREMENT & EVALUATION</div>
+    <h1>คะแนนและคะแนนมาตรฐาน</h1>
+    <div class="subtitle">Scores • Raw Score • Z-score • T-score</div>
+  </header>
+
+  <div class="card pink">
+    <h2 class="section-title pink-text"><span>📝</span> 1. คะแนนดิบ (Raw Score)</h2>
+    <p><strong>ความหมาย:</strong> คะแนนที่ได้จากการทดสอบโดยตรง ก่อนนำไปแปลงรูป</p>
+    <div class="grid-2">
+      <div class="mini">
+        <span class="emoji">📌</span>
+        <h3 class="pink-text">ข้อจำกัด</h3>
+        <p>หน่วยวัดไม่สมบูรณ์ และความหมายไม่ชัดเจนในตัวเอง</p>
+      </div>
+      <div class="mini">
+        <span class="emoji">⚠️</span>
+        <h3 class="peach-text">เปรียบเทียบไม่ได้ตรง ๆ</h3>
+        <p>คะแนนเต็มและความยากของข้อสอบแต่ละวิชาอาจต่างกัน</p>
+      </div>
+    </div>
+    <div class="highlight">ตัวอย่าง: ได้ 35 คะแนนจากข้อสอบ 50 คะแนน ยังไม่บอกโดยลำพังว่าผู้เรียนอยู่ในตำแหน่งใดเมื่อเทียบกับกลุ่ม</div>
+  </div>
+
+  <div class="card purple">
+    <h2 class="section-title purple-text"><span>🔄</span> 2. คะแนนแปลงรูป (Derived Score)</h2>
+    <p>นำคะแนนดิบมาแปลงให้อยู่ในรูปที่ตีความหรือเปรียบเทียบได้เหมาะสมขึ้น</p>
+  </div>
+
+  <div class="card blue">
+    <h2 class="section-title blue-text"><span>📐</span> คะแนนมาตรฐาน Z (Z-score)</h2>
+    <p>บอกว่าคะแนนของบุคคลอยู่สูงหรือต่ำกว่าค่าเฉลี่ยกี่หน่วยส่วนเบี่ยงเบนมาตรฐาน (SD)</p>
+    <div class="formula">
+      <div class="equation">Z = (X − X̄) / SD</div>
+      <p><strong>X</strong> = คะแนนดิบ | <strong>X̄</strong> = ค่าเฉลี่ย | <strong>SD</strong> = ส่วนเบี่ยงเบนมาตรฐาน</p>
+    </div>
+    <div class="grid-3">
+      <div class="mini">
+        <span class="emoji">⬆️</span>
+        <h3 class="blue-text">Z เป็นบวก</h3>
+        <p>สูงกว่าค่าเฉลี่ย</p>
+      </div>
+      <div class="mini">
+        <span class="emoji">➖</span>
+        <h3 class="purple-text">Z = 0</h3>
+        <p>เท่ากับค่าเฉลี่ย</p>
+      </div>
+      <div class="mini">
+        <span class="emoji">⬇️</span>
+        <h3 class="pink-text">Z เป็นลบ</h3>
+        <p>ต่ำกว่าค่าเฉลี่ย</p>
+      </div>
+    </div>
+    <div class="highlight">
+      ✏️ ตัวอย่าง: X = 80, X̄ = 70, SD = 5 → Z = (80 − 70) / 5 = <strong>2</strong><br>
+      แปลว่า คะแนนสูงกว่าค่าเฉลี่ย 2 SD
+    </div>
+  </div>
+
+  <div class="card mint">
+    <h2 class="section-title mint-text"><span>🌟</span> คะแนนมาตรฐาน T (T-score)</h2>
+    <p>แปลงจาก Z-score ให้อ่านง่ายขึ้น ลดปัญหาค่าติดลบ โดยมีค่าเฉลี่ย 50 และ SD เท่ากับ 10</p>
+    <div class="formula" style="border-color:#9fe2ca">
+      <div class="equation" style="color:#319e80">T = 10Z + 50</div>
+      <p>ค่าเฉลี่ย = 50 | ส่วนเบี่ยงเบนมาตรฐาน = 10</p>
+    </div>
+    <div class="highlight">
+      ✏️ ตัวอย่าง: ถ้า Z = 2 → T = 10(2) + 50 = <strong>70</strong>
+    </div>
+  </div>
+
+  <div class="memory">
+    <h3>🧠 สูตรจำหน้าแรก</h3>
+    <p><strong>Raw Score</strong> = คะแนนที่ได้โดยตรง</p>
+    <p><strong>Z-score</strong> = บอกตำแหน่งเทียบค่าเฉลี่ยเป็นหน่วย SD</p>
+    <p><strong>T-score</strong> = 10Z + 50 → ค่าเฉลี่ย 50, SD = 10</p>
+  </div>
+  <div class="footer">🌸 SCORE TRANSFORMATION · PAGE 1 OF 4 🌸</div>
+</section>
+
+<!-- PAGE 2: NORMALIZED T -->
+<section class="sheet">
+  <header class="header" style="border-color:var(--purple)">
+    <span class="decor left">📊</span>
+    <span class="decor right">🐰</span>
+    <div class="eyebrow">DERIVED SCORES</div>
+    <h1 style="color:#8170d3">คะแนน T-ปกติ และ PR</h1>
+    <div class="subtitle">Normalized T-score • Percentile Rank</div>
+  </header>
+
+  <div class="card purple">
+    <h2 class="section-title purple-text"><span>🔔</span> 3. คะแนน T-ปกติ (Normalized T-score)</h2>
+    <p><strong>ความหมาย:</strong> การแปลงคะแนนโดยอาศัยตำแหน่งของคะแนนในกลุ่ม แล้วเทียบตำแหน่งนั้นกับการแจกแจงแบบโค้งปกติ</p>
+    <p>เหมาะในกรณีที่ต้องการให้คะแนนแปลงมีความหมายตามตำแหน่งบนโค้งปกติ แม้คะแนนดิบเดิมจะไม่ได้แจกแจงเป็นโค้งปกติ</p>
+    <div class="highlight">
+      🎯 จุดสำคัญ: ต้องพิจารณาลำดับคะแนน ความถี่สะสม ตำแหน่งเปอร์เซ็นต์ไทล์ และตารางโค้งปกติ ไม่ใช่นำคะแนนดิบไปแทนในสูตร T = 10Z + 50 โดยตรงทุกกรณี
+    </div>
+  </div>
+
+  <div class="card blue">
+    <h2 class="section-title blue-text"><span>📈</span> เปอร์เซ็นต์ไทล์ (Percentile Rank: PR)</h2>
+    <p>บอกตำแหน่งสัมพัทธ์ของคะแนนเมื่อเทียบกับสมาชิกในกลุ่ม โดยคำนึงถึงความถี่ของคะแนน</p>
+    <div class="formula">
+      <div class="equation">PR = [(cf + ½f) / N] × 100</div>
+      <p><strong>cf</strong> = ความถี่สะสมก่อนถึงคะแนนนั้น</p>
+      <p><strong>f</strong> = ความถี่ของคะแนนนั้น | <strong>N</strong> = จำนวนผู้เข้าสอบทั้งหมด</p>
+    </div>
+    <div class="highlight">
+      ⚠️ ใช้สูตรตามนิยามที่รายวิชากำหนด เพราะบางตำราอาจนิยามการคำนวณ PR แตกต่างกันเล็กน้อย
+    </div>
+  </div>
+
+  <div class="card mint">
+    <h2 class="section-title mint-text"><span>🪜</span> ขั้นตอนหา Normalized T-score</h2>
+    <div class="flow">
+      <div class="flowbox">① เรียง<br>คะแนนดิบ</div>
+      <span class="arrow">→</span>
+      <div class="flowbox">② หา<br>ความถี่สะสม</div>
+      <span class="arrow">→</span>
+      <div class="flowbox">③ คำนวณ<br>PR</div>
+    </div>
+    <div class="flow">
+      <div class="flowbox">④ เทียบ PR<br>กับตารางโค้งปกติ</div>
+      <span class="arrow">→</span>
+      <div class="flowbox">⑤ แปลงเป็น<br>คะแนน T-ปกติ</div>
+    </div>
+  </div>
+
+  <div class="card yellow">
+    <h2 class="section-title yellow-text"><span>🧩</span> เปรียบเทียบคะแนนแปลงรูป</h2>
+    <table>
+      <tr>
+        <th>ประเภท</th>
+        <th>จุดประสงค์ / ลักษณะ</th>
+      </tr>
+      <tr>
+        <td><strong>Z-score</strong></td>
+        <td>บอกระยะห่างจากค่าเฉลี่ยเป็นหน่วย SD ค่าเฉลี่ย 0 และ SD 1</td>
+      </tr>
+      <tr>
+        <td><strong>T-score</strong></td>
+        <td>แปลงจาก Z เพื่อให้อ่านง่าย ค่าเฉลี่ย 50 และ SD 10</td>
+      </tr>
+      <tr>
+        <td><strong>Normalized T-score</strong></td>
+        <td>อาศัยตำแหน่งเปอร์เซ็นต์ไทล์และตารางโค้งปกติเพื่อแปลงคะแนน</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card pink">
+    <h2 class="section-title pink-text"><span>💭</span> จุดที่มักสับสนในข้อสอบ</h2>
+    <ul>
+      <li><strong>Z-score เป็นลบ</strong> ไม่ได้แปลว่าคะแนนดิบติดลบ แต่หมายถึงต่ำกว่าค่าเฉลี่ย</li>
+      <li><strong>T-score ทั่วไป</strong> คำนวณจาก Z ด้วยสูตร T = 10Z + 50</li>
+      <li><strong>Normalized T-score</strong> อาศัยอันดับ/PR และโค้งปกติ จึงไม่ควรสับสนกับ T-score ทั่วไป</li>
+      <li><strong>PR 80</strong> หมายถึงตำแหน่งเปอร์เซ็นต์ไทล์ที่ 80 ไม่ได้แปลว่าได้คะแนนดิบ 80 คะแนน</li>
+    </ul>
+  </div>
+
+  <div class="memory">
+    <h3>⭐ จำลำดับนี้ให้แม่น</h3>
+    <p><strong>เรียงคะแนน → cf และ f → PR → ตารางโค้งปกติ → Normalized T</strong></p>
+  </div>
+  <div class="footer">🌸 NORMALIZED SCORES · PAGE 2 OF 4 🌸</div>
+</section>
+
+<!-- PAGE 3: GRADING -->
+<section class="sheet">
+  <header class="header" style="border-color:var(--yellow)">
+    <span class="decor left">🏅</span>
+    <span class="decor right">🎀</span>
+    <div class="eyebrow">GRADING SYSTEM</div>
+    <h1 style="color:#b58a25">องค์ประกอบและวิธีการตัดเกรด</h1>
+    <div class="subtitle">Measurement • Criteria • Value Judgement</div>
+  </header>
+
+  <div class="card yellow">
+    <h2 class="section-title yellow-text"><span>⚖️</span> 1. องค์ประกอบของการให้เกรด 3 ด้าน</h2>
+    <div class="grid-3">
+      <div class="mini">
+        <span class="emoji">📏</span>
+        <h3 class="blue-text">Measurement</h3>
+        <p><strong>ผลการวัด</strong></p>
+        <p>ถูกต้อง แม่นยำ ครอบคลุม เที่ยงตรง และเชื่อถือได้</p>
+      </div>
+      <div class="mini">
+        <span class="emoji">🎯</span>
+        <h3 class="purple-text">Criteria</h3>
+        <p><strong>เกณฑ์พิจารณา</strong></p>
+        <p>เป้าหมายหรือหลักที่ใช้เปรียบเทียบผลการเรียน</p>
+      </div>
+      <div class="mini">
+        <span class="emoji">💗</span>
+        <h3 class="pink-text">Value Judgement</h3>
+        <p><strong>วิจารณญาณและคุณธรรม</strong></p>
+        <p>ใช้ดุลยพินิจอย่างรอบคอบ เป็นธรรม ไม่ลำเอียง</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card pink">
+    <h2 class="section-title pink-text"><span>👥</span> 2. การตัดเกรดแบบอิงกลุ่ม</h2>
+    <p><strong>Norm-Referenced Grading</strong></p>
+    <p>ตัดสินผลโดยเปรียบเทียบคะแนนของผู้เรียนกับผู้เรียนคนอื่นในกลุ่มเดียวกัน เพื่อพิจารณาตำแหน่งสัมพัทธ์</p>
+
+    <div class="card" style="background:white">
+      <h3 class="pink-text">วิธีกำหนดช่วงเกรด</h3>
+      <p><strong>วิธีที่ 1: ใช้พิสัย (Range)</strong></p>
+      <div class="formula">
+        <div class="equation">R = คะแนนสูงสุด − คะแนนต่ำสุด</div>
+        <p>ความกว้างของช่วงเกรด = R ÷ จำนวนช่วงเกรด</p>
+      </div>
+      <p><strong>วิธีที่ 2: ใช้ค่าเฉลี่ยและ SD</strong></p>
+      <p>ใช้ค่าเฉลี่ยเป็นจุดอ้างอิง และใช้ SD ช่วยกำหนดช่วงคะแนน</p>
+      <p><strong>วิธีที่ 3: ใช้โค้งปกติ</strong></p>
+      <p>ใช้ค่าเฉลี่ยและ SD ประกอบการจัดกลุ่มตามตำแหน่งบนโค้งปกติ</p>
+    </div>
+
+    <div class="grid-2">
+      <div class="mini" style="background:#eafaf3">
+        <span class="emoji">✅</span>
+        <h3 class="mint-text">ข้อดี</h3>
+        <p>เห็นตำแหน่งของผู้เรียนในกลุ่มอย่างเป็นระบบ</p>
+      </div>
+      <div class="mini" style="background:#fff0f5">
+        <span class="emoji">⚠️</span>
+        <h3 class="pink-text">ข้อจำกัด</h3>
+        <p>เกรดขึ้นกับความสามารถของกลุ่ม และอาจต่างกันแม้คะแนนใกล้เคียงกัน</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card blue">
+    <h2 class="section-title blue-text"><span>🎯</span> 3. การตัดเกรดแบบอิงเกณฑ์</h2>
+    <p><strong>Criterion-Referenced Grading</strong></p>
+    <p>เปรียบเทียบผลการเรียนกับเกณฑ์หรือจุดประสงค์ที่กำหนดไว้ ไม่ได้ตัดสินจากอันดับของเพื่อนในกลุ่ม</p>
+    <div class="formula" style="border-color:#9bd8f3">
+      <div class="equation" style="color:#378ab8">ตัวอย่าง: A ≥ 80%</div>
+      <p>ผู้เรียนได้ระดับ A เมื่อมีผลตามเกณฑ์ที่กำหนดตั้งแต่ 80% ขึ้นไป</p>
+    </div>
+    <div class="grid-2">
+      <div class="mini" style="background:#eafaf3">
+        <h3 class="mint-text">ข้อดี</h3>
+        <p>ช่วยให้เห็นเป้าหมายชัดเจน ส่งเสริมแรงจูงใจและความร่วมมือ และสอดคล้องกับมาตรฐานวิชาชีพ</p>
+      </div>
+      <div class="mini" style="background:#fff9e4">
+        <h3 class="yellow-text">ข้อจำกัด</h3>
+        <p>เกณฑ์ของผู้สอนอาจต่างกัน และต้องตรวจสอบความเหมาะสมและความเชื่อถือได้ของเกณฑ์</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card purple">
+    <h2 class="section-title purple-text"><span>🤝</span> 4. การตัดเกรดแบบผสม</h2>
+    <p>ใช้แนวคิด <strong>อิงกลุ่ม + อิงเกณฑ์</strong> ร่วมกัน โดยพิจารณาความเหมาะสมของรายวิชา จุดประสงค์ และนโยบายการประเมิน</p>
+  </div>
+
+  <div class="memory">
+    <h3>🧠 จำเปรียบเทียบให้ขึ้นใจ</h3>
+    <p><strong>อิงกลุ่ม = เทียบเพื่อน</strong> | <strong>อิงเกณฑ์ = เทียบเป้าหมาย</strong> | <strong>แบบผสม = ใช้ทั้งสองแนวทาง</strong></p>
+  </div>
+  <div class="footer">🌸 GRADING METHODS · PAGE 3 OF 4 🌸</div>
+</section>
+
+<!-- PAGE 4: DEVELOPMENT AND ACTION RESEARCH -->
+<section class="sheet">
+  <header class="header" style="border-color:var(--mint)">
+    <span class="decor left">🌱</span>
+    <span class="decor right">🐱</span>
+    <div class="eyebrow">ASSESSMENT FOR LEARNING</div>
+    <h1 style="color:#319e80">การประเมินเพื่อพัฒนาผู้เรียน</h1>
+    <div class="subtitle">พัฒนาการ • 3 พิสัย • การวิจัยในชั้นเรียน</div>
+  </header>
+
+  <div class="card mint">
+    <h2 class="section-title mint-text"><span>🌈</span> 1. การประเมินการเรียนรู้ 3 ด้าน</h2>
+    <p>ครูควรสร้างเครื่องมือวัดผลให้ครอบคลุมพฤติกรรมการเรียนรู้ทั้ง 3 พิสัย เพื่อให้เห็นความสามารถของผู้เรียนอย่างรอบด้าน</p>
+    <div class="grid-3">
+      <div class="mini">
+        <span class="emoji">🧠</span>
+        <h3 class="purple-text">พุทธิพิสัย</h3>
+        <p><strong>Cognitive</strong></p>
+        <p>ความรู้ ความจำ ความเข้าใจ การคิด และการแก้ปัญหา</p>
+        <span class="pill">ถาม–ตอบ / แบบทดสอบ</span>
+      </div>
+      <div class="mini">
+        <span class="emoji">💗</span>
+        <h3 class="pink-text">จิตพิสัย</h3>
+        <p><strong>Affective</strong></p>
+        <p>เจตคติ คุณธรรม ค่านิยม และความรับผิดชอบ</p>
+        <span class="pill">สังเกต / Rating Scale</span>
+      </div>
+      <div class="mini">
+        <span class="emoji">🛠️</span>
+        <h3 class="mint-text">ทักษะพิสัย</h3>
+        <p><strong>Psychomotor</strong></p>
+        <p>ทักษะการปฏิบัติ การใช้เครื่องมือ และการลงมือทำ</p>
+        <span class="pill">สังเกต / ประเมินผลงาน</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card blue">
+    <h2 class="section-title blue-text"><span>📈</span> 2. คะแนนพัฒนาการ</h2>
+    <p>ให้ความสำคัญกับการเปลี่ยนแปลงและความก้าวหน้าของผู้เรียนจากการวัดผลอย่างต่อเนื่อง ไม่พิจารณาเฉพาะผลการสอบครั้งเดียว</p>
+    <div class="flow">
+      <div class="flowbox">วัดก่อนเรียน</div>
+      <span class="arrow">→</span>
+      <div class="flowbox">จัดการเรียนรู้</div>
+      <span class="arrow">→</span>
+      <div class="flowbox">วัดระหว่าง/หลังเรียน</div>
+    </div>
+    <div class="highlight">
+      💡 ครูใช้ข้อมูลที่ได้เพื่อดูความก้าวหน้า ค้นหาสิ่งที่ผู้เรียนยังต้องพัฒนา และปรับวิธีสอนให้เหมาะสม
+    </div>
+  </div>
+
+  <div class="card peach">
+    <h2 class="section-title peach-text"><span>🔍</span> 3. การวิจัยในชั้นเรียน</h2>
+    <p><strong>Classroom Action Research</strong></p>
+    <p>เมื่อประเมินแล้วพบปัญหาหรือข้อบกพร่อง ครูศึกษาปัญหาอย่างเป็นระบบ ทดลองหาแนวทางแก้ไข และนำผลมาใช้พัฒนาการเรียนรู้ของผู้เรียน</p>
+
+    <div class="flow">
+      <div class="flowbox">① พบปัญหา<br>จากการประเมิน</div>
+      <span class="arrow">→</span>
+      <div class="flowbox">② วางแผน<br>แก้ไข</div>
+    </div>
+    <div class="flow">
+      <div class="flowbox">③ ลงมือทำ<br>และเก็บข้อมูล</div>
+      <span class="arrow">→</span>
+      <div class="flowbox">④ วิเคราะห์ผล<br>และปรับปรุง</div>
+    </div>
+
+    <div class="highlight" style="border-color:var(--peach)">
+      🎯 เป้าหมาย: แก้ปัญหาการเรียนรู้ พัฒนาผู้เรียนอย่างต่อเนื่อง และช่วยให้ผู้เรียนเรียนรู้อย่างมีความสุขตามศักยภาพของตนเอง
+    </div>
+  </div>
+
+  <div class="card purple">
+    <h2 class="section-title purple-text"><span>🗂️</span> ตารางสรุปก่อนสอบ</h2>
+    <table>
+      <tr>
+        <th>คำสำคัญ</th>
+        <th>จำให้ได้ว่า...</th>
+      </tr>
+      <tr>
+        <td>Raw Score</td>
+        <td>คะแนนดิบที่ได้โดยตรงจากการทดสอบ</td>
+      </tr>
+      <tr>
+        <td>Z-score</td>
+        <td>(X − X̄) / SD บอกระยะห่างจากค่าเฉลี่ย</td>
+      </tr>
+      <tr>
+        <td>T-score</td>
+        <td>10Z + 50 ค่าเฉลี่ย 50 และ SD 10</td>
+      </tr>
+      <tr>
+        <td>อิงกลุ่ม</td>
+        <td>เปรียบเทียบกับผู้เรียนในกลุ่มเดียวกัน</td>
+      </tr>
+      <tr>
+        <td>อิงเกณฑ์</td>
+        <td>เปรียบเทียบกับเป้าหมายหรือเกณฑ์ที่ตั้งไว้</td>
+      </tr>
+      <tr>
+        <td>3 พิสัย</td>
+        <td>พุทธิพิสัย + จิตพิสัย + ทักษะพิสัย</td>
+      </tr>
+      <tr>
+        <td>วิจัยในชั้นเรียน</td>
+        <td>ใช้ข้อมูลและกระบวนการวิจัยแก้ปัญหาเพื่อพัฒนาการเรียนรู้</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="memory">
+    <h3>🎓 จำให้แม่น ทำข้อสอบได้!</h3>
+    <p><strong>การวัด</strong> ให้ข้อมูล → <strong>เกณฑ์</strong> ใช้ตัดสิน → <strong>ครู</strong> ใช้วิจารณญาณอย่างเป็นธรรม</p>
+    <p>ประเมินแล้วต้องนำผลไปใช้ต่อ: <strong>รู้ปัญหา → พัฒนา → ประเมินซ้ำ</strong></p>
+    <p>🌷 คะแนนไม่ใช่เพียงผลลัพธ์ แต่เป็นข้อมูลสำหรับช่วยให้ผู้เรียนก้าวหน้าขึ้น 🌷</p>
+  </div>
+
+  <div class="footer">🌸 LEARN · ASSESS · IMPROVE · PAGE 4 OF 4 🌸</div>
+</section>
+</body>
+</html>
